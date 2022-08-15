@@ -1,28 +1,52 @@
 import jwt from "jsonwebtoken";
+// import User from "../models/user";
 
 const secret = "test";
 
 const auth = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization.split(" ")[1];
-    const isCustomAuth = token.length < 500;
+  let token;
 
-    let decodedData;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      // Get token from header
+      token = req.headers.authorization.split(" ")[1];
 
-    if (token && isCustomAuth) {
-      decodedData = jwt.verify(token, secret);
+      // Verify token
+      const decoded = jwt.verify(
+        token,
+        secret
+        // process.env.JWT_SECRET
+      );
 
-      req.userId = decodedData?.id;
-    } else {
-      decodedData = jwt.decode(token);
+      // Get user from the token
+      // req.user = await User.findById(decoded.id).select("-password");
 
-      req.userId = decodedData?.sub;
+      next();
+    } catch (error) {
+      console.log(error);
+      res.status(401);
+      throw new Error("Not authorized");
     }
-
-    next();
-  } catch (error) {
-    console.log(error);
   }
+  // console.log(req.headers, "MIDDLE");
+  // try {
+  // const token = req.headers.authorization.split(" ")[1];
+  // const isCustomAuth = token.length < 500;
+  // let decodedData;
+  // if (token && isCustomAuth) {
+  //   decodedData = jwt.verify(token, secret);
+  //   req.userId = decodedData?.id;
+  // } else {
+  //   decodedData = jwt.decode(token);
+  //   req.userId = decodedData?.sub;
+  // }
+  // next();
+  // } catch (error) {
+  //   console.log(error);
+  // }
 };
 
 export default auth;
