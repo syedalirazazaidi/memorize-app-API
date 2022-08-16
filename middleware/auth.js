@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-// import User from "../models/user";
+// import UserModel from "../models/user";
 
 const secret = "test";
 
@@ -20,9 +20,10 @@ const auth = async (req, res, next) => {
         secret
         // process.env.JWT_SECRET
       );
+      console.log(decoded, "DECOD");
 
       // Get user from the token
-      // req.user = await User.findById(decoded.id).select("-password");
+      // req.user = await UserModel.findById(decoded.id).select("-password");
 
       next();
     } catch (error) {
